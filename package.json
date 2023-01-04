@@ -1,0 +1,21 @@
+{
+  "name": "wherehome-backend-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node src/local-server.js"
+  },
+  "author": "mj",
+  "email": "codemike@naver.com",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "printWidth": 120
+  }
+}
