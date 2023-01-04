@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "node src/local-server.js"
+    "serve": "node api/local-server.js"
   },
   "author": "mj",
   "email": "codemike@naver.com",
