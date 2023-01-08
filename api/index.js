@@ -32,47 +32,11 @@ app.get('/api/bus_stations', async (req, res) => {
         tmX: pointX,
         tmY: pointY,
         radius: radius || 500,
+        resultType: 'json',
       },
     })
 
-    const refinedData = data.split('</msgHeader>').pop()
-
-    const dataJSON = refinedData
-      .split('</itemList>')
-      .map((str) => {
-        if (
-          ['arsId', 'dist', 'gpsX', 'gpsY', 'posX', 'posY', 'stationId', 'stationNm', 'stationTp']
-            .map((key) => str.includes(key))
-            .findIndex((isIncludes) => !isIncludes) !== -1
-        ) {
-          return null
-        }
-
-        const arsId = str.split('<arsId>').pop().split('</arsId>')[0]
-        const dist = str.split('<dist>').pop().split('</dist>')[0]
-        const gpsX = str.split('<gpsX>').pop().split('</gpsX>')[0]
-        const gpsY = str.split('<gpsY>').pop().split('</gpsY>')[0]
-        const posX = str.split('<posX>').pop().split('</posX>')[0]
-        const posY = str.split('<posY>').pop().split('</posY>')[0]
-        const stationId = str.split('<stationId>').pop().split('</stationId>')[0]
-        const stationNm = str.split('<stationNm>').pop().split('</stationNm>')[0]
-        const stationTp = str.split('<stationTp>').pop().split('</stationTp>')[0]
-
-        return {
-          arsId,
-          dist,
-          gpsX,
-          gpsY,
-          posX,
-          posY,
-          stationId,
-          stationNm,
-          stationTp,
-        }
-      })
-      .filter((station) => station)
-
-    res.status(200).send(dataJSON)
+    res.status(200).send(data.msgBody.itemList)
   } catch (error) {
     console.log(error)
     res.status(400).send(error)
