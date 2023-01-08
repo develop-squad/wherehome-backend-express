@@ -74,4 +74,35 @@ app.get('/api/bus_routes', async (req, res) => {
   }
 })
 
+app.get('/api/bus_route_paths', async (req, res) => {
+  console.log('GET /api/bus_route_paths')
+
+  const { busRouteId } = req.query
+
+  if (!stationId) {
+    res.status(400).json({
+      status: 'error',
+      error: 'query is empty',
+    })
+    return
+  }
+
+  try {
+    const serviceKey = process.env.OPEN_API_KEY
+
+    const { data } = await axios.get('http://ws.bus.go.kr/api/rest/busRouteInfo/getRoutePath', {
+      params: {
+        serviceKey,
+        busRouteId,
+        resultType: 'json',
+      },
+    })
+
+    res.status(200).send(data.msgBody.itemList)
+  } catch (error) {
+    console.log(error)
+    res.status(400).send(error)
+  }
+})
+
 module.exports = app
