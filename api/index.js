@@ -74,12 +74,12 @@ app.get('/api/bus_routes', async (req, res) => {
   }
 })
 
-app.get('/api/bus_route_paths', async (req, res) => {
+app.get('/api/bus_stations_by_route', async (req, res) => {
   console.log('GET /api/bus_route_paths')
 
   const { busRouteId } = req.query
 
-  if (!stationId) {
+  if (!busRouteId) {
     res.status(400).json({
       status: 'error',
       error: 'query is empty',
@@ -90,7 +90,7 @@ app.get('/api/bus_route_paths', async (req, res) => {
   try {
     const serviceKey = process.env.OPEN_API_KEY
 
-    const { data } = await axios.get('http://ws.bus.go.kr/api/rest/busRouteInfo/getRoutePath', {
+    const { data } = await axios.get('http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute', {
       params: {
         serviceKey,
         busRouteId,
