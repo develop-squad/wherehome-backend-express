@@ -1,10 +1,12 @@
 const express = require('express')
 const axios = require('axios')
+const cors = require('cors')
 require('dotenv').config()
 
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 
 app.get('/api/test', async (req, res) => {
   res.sendStatus(200)
