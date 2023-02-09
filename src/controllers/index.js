@@ -1,18 +1,7 @@
-const express = require('express')
 const axios = require('axios')
-const cors = require('cors')
-require('dotenv').config()
+const { GET_STATION_BY_POS_LINK, GET_ROUTE_BY_STATION_LINK, GET_STATION_BY_ROUTE_LINK } = require('../helpers/constants')
 
-const app = express()
-
-app.use(express.json())
-app.use(cors())
-
-app.get('/api/test', async (req, res) => {
-  res.sendStatus(200)
-})
-
-app.get('/api/bus_stations', async (req, res) => {
+exports.getBusStationsByPosition = async (req, res) => {
   console.log('GET /api/bus_stations')
 
   const { pointX, pointY, radius } = req.query
@@ -28,7 +17,7 @@ app.get('/api/bus_stations', async (req, res) => {
   try {
     const serviceKey = process.env.OPEN_API_KEY
 
-    const { data } = await axios.get('http://ws.bus.go.kr/api/rest/stationinfo/getStationByPos', {
+    const { data } = await axios.get(GET_STATION_BY_POS_LINK, {
       params: {
         serviceKey,
         tmX: pointX,
@@ -43,9 +32,9 @@ app.get('/api/bus_stations', async (req, res) => {
     console.log(error)
     res.status(400).send(error)
   }
-})
+}
 
-app.get('/api/bus_routes', async (req, res) => {
+exports.getBusRoutes = async (req, res) => {
   console.log('GET /api/bus_routes')
 
   const { stationId } = req.query
@@ -61,7 +50,7 @@ app.get('/api/bus_routes', async (req, res) => {
   try {
     const serviceKey = process.env.OPEN_API_KEY
 
-    const { data } = await axios.get('http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation', {
+    const { data } = await axios.get(GET_ROUTE_BY_STATION_LINK, {
       params: {
         serviceKey,
         arsId: stationId,
@@ -74,9 +63,9 @@ app.get('/api/bus_routes', async (req, res) => {
     console.log(error)
     res.status(400).send(error)
   }
-})
+}
 
-app.get('/api/bus_stations_by_route', async (req, res) => {
+exports.getBusStationsByRoute = async (req, res) => {
   console.log('GET /api/bus_route_paths')
 
   const { busRouteId } = req.query
@@ -92,7 +81,7 @@ app.get('/api/bus_stations_by_route', async (req, res) => {
   try {
     const serviceKey = process.env.OPEN_API_KEY
 
-    const { data } = await axios.get('http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute', {
+    const { data } = await axios.get(GET_STATION_BY_ROUTE_LINK, {
       params: {
         serviceKey,
         busRouteId,
@@ -105,6 +94,4 @@ app.get('/api/bus_stations_by_route', async (req, res) => {
     console.log(error)
     res.status(400).send(error)
   }
-})
-
-module.exports = app
+}
