@@ -88,11 +88,11 @@ exports.getBusRoutes = async (req, res) => {
 }
 
 exports.getBusStationsByRoute = async (req, res) => {
-  console.log('GET /api/bus_route_paths')
+  console.log('GET /api/bus_stations_by_route')
 
-  const { busRouteId } = req.query
+  const { busRouteIds } = req.query
 
-  if (!busRouteId) {
+  if (!busRouteIds) {
     res.status(400).json({
       status: 'error',
       error: 'query is empty',
@@ -100,18 +100,36 @@ exports.getBusStationsByRoute = async (req, res) => {
     return
   }
 
-  try {
+  const getAllBusStations = async (busRouteIds) => {
     const serviceKey = process.env.OPEN_API_KEY
 
-    const { data } = await axios.get(GET_STATION_BY_ROUTE_LINK, {
-      params: {
-        serviceKey,
-        busRouteId,
-        resultType: 'json',
-      },
-    })
+    const routes = await Promise.all(
+      busRouteIds.map(async (busRouteId) => {
+        try {
+          const { data } = await axios.get(GET_STATION_BY_ROUTE_LINK, {
+            params: {
+              serviceKey,
+              busRouteId,
+              resultType: 'json',
+            },
+          })
 
-    res.status(200).send(data.msgBody.itemList)
+          if (!data) return { busRouteId, status: 'error' }
+
+          return { busRouteId, busStations: data.msgBody.itemList || [] }
+        } catch (error) {
+          return { busRouteId, status: 'error' }
+        }
+      })
+    )
+
+    return routes
+  }
+
+  try {
+    const response = await getAllBusStations(busRouteIds.split(','))
+
+    res.status(200).send(response)
   } catch (error) {
     console.log(error)
     res.status(400).send(error)
